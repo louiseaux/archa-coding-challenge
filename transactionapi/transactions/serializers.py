@@ -1,10 +1,10 @@
 from .models import Transaction
 from rest_framework import serializers
 
-class TransactionSerializer(serializers.ModelSerializer):
+class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Transaction
-        fields = ['transaction_type', 'amount', 'description']
+        fields = ['id', 'transaction_type', 'amount', 'description']
 
     def validate_amount(self, value):
         '''
