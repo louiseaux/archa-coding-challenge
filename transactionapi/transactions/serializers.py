@@ -11,7 +11,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         Check that transaction type is either Deposit or Withdrawal
         '''
         if value not in ['DEPOSIT', 'WITHDRAWAL']:
-            raise serializers.ValidationError('Transaction type must be either "DEPOSIT" or "WITHDRAWAL"')
+            raise serializers.ValidationError('Transaction type must be either "DEPOSIT" or "WITHDRAWAL".')
         return value
 
     def validate_amount(self, value):
