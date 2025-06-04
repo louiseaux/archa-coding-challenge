@@ -18,7 +18,7 @@ Install the project dependencies:
 pip install -r requirements.txt
 ```
 
-Set up the database. Locally, this will create a new sqlite database:
+Set up the database. Locally, this will create a new SQLite database:
 
 ```shell
 python transactionapi/manage.py migrate

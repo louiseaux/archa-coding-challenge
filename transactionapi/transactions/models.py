@@ -10,4 +10,4 @@ class Transaction(models.Model):
     description = models.TextField(max_length=18, blank=True, default='')
 
     def __str__(self):
-        return f"{self.transaction_type} {self.amount}"
+        return f"{self.transaction_type} {self.amount:.2f}"
