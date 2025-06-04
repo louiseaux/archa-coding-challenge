@@ -6,14 +6,6 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = ['transaction_type', 'amount', 'description']
 
-    def validate_transaction_type(self, value):
-        '''
-        Check that transaction type is either Deposit or Withdrawal
-        '''
-        if value not in ['DEPOSIT', 'WITHDRAWAL']:
-            raise serializers.ValidationError('Transaction type must be either "DEPOSIT" or "WITHDRAWAL".')
-        return value
-
     def validate_amount(self, value):
         '''
         Check that amount is positive
