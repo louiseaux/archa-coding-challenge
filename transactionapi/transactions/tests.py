@@ -1,8 +1,39 @@
+from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from .models import Transaction
+
+class TransactionModelTestCase(TestCase):
+    def setUp(self):
+        # Set up non-modified objects used by all test methods
+        Transaction.objects.create(transaction_type=Transaction.TransactionTypes.DEPOSIT, amount=100, description="Initial deposit")
+        Transaction.objects.create(transaction_type=Transaction.TransactionTypes.WITHDRAWAL, amount=50, description="Withdraw funds")
+        Transaction.objects.create(transaction_type=Transaction.TransactionTypes.DEPOSIT, amount=75)
+
+    def test_transaction_type_label(self):
+        transaction = Transaction.objects.get(id=1)
+        field_label = transaction._meta.get_field('transaction_type').verbose_name
+        self.assertEqual(field_label, 'transaction type')
+    
+    def test_transaction_type_choices(self):
+        transaction = Transaction.objects.get(id=2)
+        self.assertEqual(transaction.transaction_type, 'WITHDRAWAL')
+    
+    def test_description_max_length(self):
+        transaction = Transaction.objects.get(id=1)
+        max_length = transaction._meta.get_field('description').max_length
+        self.assertEqual(max_length, 18)
+    
+    def test_description_blank(self):
+        transaction = Transaction.objects.get(id=3)
+        self.assertEqual(transaction.description, '')
+
+    def test_string_representation(self):
+        transaction = Transaction.objects.get(id=1)
+        expected_object_name = f'{transaction.transaction_type} {transaction.amount}'
+        self.assertEqual(str(transaction), expected_object_name)
 
 class TransactionViewsTestCase(APITestCase):
     def setUp(self):
@@ -27,7 +58,7 @@ class TransactionViewsTestCase(APITestCase):
         }
         self.missing_type = {
             "amount": 75,
-            "description": "Missing amount"
+            "description": "Missing type"
         }
         
     def test_create_transaction_valid(self):
