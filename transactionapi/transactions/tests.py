@@ -16,7 +16,7 @@ class TransactionModelTestCase(TestCase):
         transaction = Transaction.objects.get(id=1)
         field_label = transaction._meta.get_field('transaction_type').verbose_name
         self.assertEqual(field_label, 'transaction type')
-    
+
     def test_transaction_type_choices(self):
         transaction = Transaction.objects.get(id=2)
         self.assertEqual(transaction.transaction_type, 'WITHDRAWAL')
@@ -37,29 +37,19 @@ class TransactionModelTestCase(TestCase):
 
 class TransactionViewsTestCase(APITestCase):
     def setUp(self):
-        self.valid_tx = {
-            "transaction_type": "DEPOSIT",
-            "amount": 100,
-            "description": "Initial deposit"
-        }
-        self.invalid_amount = {
-            "transaction_type": "DEPOSIT",
-            "amount": -100,
-            "description": "Invalid amount"
-        }
-        self.invalid_type = {
-            "transaction_type": "INVALID",
-            "amount": 25,
-            "description": "Invalid type"
-        }
-        self.missing_amount = {
-            "transaction_type": "WITHDRAWAL",
-            "description": "Missing amount"
-        }
-        self.missing_type = {
-            "amount": 75,
-            "description": "Missing type"
-        }
+        self.valid_tx = {"transaction_type": "DEPOSIT", "amount": 100, "description": "Initial deposit"}
+        self.invalid_amount = {"transaction_type": "DEPOSIT", "amount": -100, "description": "Invalid amount"}
+        self.invalid_type = {"transaction_type": "INVALID", "amount": 25, "description": "Invalid type"}
+        self.missing_amount = {"transaction_type": "WITHDRAWAL", "description": "Missing amount"}
+        self.missing_type = {"amount": 75, "description": "Missing type"}
+    
+    def test_view_url_exists_at_desired_location(self):
+        response = self.client.get('/transactions/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(reverse('transaction-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         
     def test_create_transaction_valid(self):
         '''
@@ -118,7 +108,7 @@ class TransactionViewsTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {'id': 1, 'transaction_type': 'DEPOSIT', 'amount': '100.00', 'description': 'Initial deposit'})
 
-    def test_transaction_by_invalid_id(self):
+    def test_get_transaction_by_invalid_id(self):
         '''
         Ensure non-existant transactions throw a 404
         '''
